@@ -81,8 +81,31 @@ def fdgradcolor(html):
     s = FindGradColor()
     return s.read(html)
 
+
+class ParseTable(HTMLParser):
+    def handle_starttag(self, tag, attrs):
+        if tag == 'tr':
+            self.stable = []
+            
+        if (tag == 'td') or (tag == 'th'):
+            self.stable.append(1)
+
+    def handle_endtag(self, tag):
+        if tag == 'tr':
+            self.table.append(self.stable)
+
+    def read(self, data):
+        self.table = []
+        self.stable = []
+        self.feed(data)
+        return self.table
+
+def ftable(html):
+    s = ParseTable()
+    return s.read(html)
+
 def main():
-    f = open("C:\\Users\\zachn\\OneDrive\Documents\\GitHub\\document2\\notebook\\cs006_lab4\\index2.html", "r")
+    f = open("C:\\Users\\zachn\\OneDrive\\Documents\\GitHub\\cs006_lab4\\index2.html", "r")
     html = f.read()
     errormsg = ""
 
@@ -98,9 +121,22 @@ def main():
     total = []
 
     from PIL import Image
+    
+    pppoints = 10
+    pppts = 0
 
+    tb = ftable(html)
+    xx = len(tb)
+    if xx == 2:
+        pppts = pppts + 1
 
+    for i in range(0, xx):
+        if len(tb[i]) == 4:
+            pppts = pppts + 1
 
+    pppoints = pppoints * (float(pppts) / 3.0)
+
+    total.append(pppoints)
 
     for x in retx:
         if x in ['aboutme']:
@@ -316,7 +352,7 @@ def main():
 
     total.append(0)
     total.append(sumtotal)
-    infolist = ["1. Title is correct and different from the given index.html {0}/5","2. H1 element is correct and different from the given index.html {0}/5","3. About me is correct {0}/10","4. Unorder List exists and differs from the given in index.html {0}/5","5. Order List exists and differs from the given in index.html {0}/5","6. Address differs from the given in index.html {0}/5","7. Email differs from the given in index.html {0}/5","8. Footer differs from the given in index.html {0}/5 ","9. Components having different color {0}/10", "10. Pictures exist and are in valid format {0}/10","11. CSS colors are correct and differ from the ones of css files in the folder {0}/30","Error Message: {0}","12. One color is another color's lighter version {0}/5 (Manual grading)", "total scores: {0}"]
+    infolist = ["0. Table is correct with the number of rows and number of columns {0} / 10", "1. Title is correct and different from the given index.html {0}/5","2. H1 element is correct and different from the given index.html {0}/5","3. About me is correct {0}/10","4. Unorder List exists and differs from the given in index.html {0}/5","5. Order List exists and differs from the given in index.html {0}/5","6. Address differs from the given in index.html {0}/5","7. Email differs from the given in index.html {0}/5","8. Footer differs from the given in index.html {0}/5 ","9. Components having different color {0}/10", "10. Pictures exist and are in valid format {0}/10","11. CSS colors are correct and differ from the ones of css files in the folder {0}/30","Error Message: {0}","12. One color is another color's lighter version {0}/5 (Manual grading)", "total scores: {0}/110"]
 
 
     f = open("grades.txt", "w")
@@ -328,4 +364,4 @@ def main():
     f.write(outputinfo)
 
     f.close()
-    return outputinfo
+    return sumtotal, outputinfo

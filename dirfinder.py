@@ -9,7 +9,7 @@
 
 import grading
 import os
-directory = "C:\\Users\\zachn\\OneDrive\\Desktop\\lab3\\tmp"
+directory = "C:\\Users\\zachn\\OneDrive\\Documents\\labs\\lab4\\tmp"
 
 os.chdir(directory)
 
@@ -23,6 +23,7 @@ def directory_find(root='.'):
             if '4' in x:
                 return os.path.join(path, x)
 
+dataofstudents = {'Name' :[] , 'ID': [], 'scores': [], 'comments' : []}
 currentlevel = next(os.walk('.'))[1] 
 for x in currentlevel:
     try:
